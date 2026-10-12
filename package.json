@@ -10,6 +10,8 @@
     "pretest": "node scripts/build-plugin.js",
     "setup": "node scripts/setup.js",
     "start": "node --env-file=.env src/index.js",
+    "prestart:remote": "node scripts/build-plugin.js",
+    "start:remote": "node --env-file=.env src/remote.js",
     "test": "node --test test/*.test.js"
   },
   "dependencies": {
