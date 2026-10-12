@@ -57,6 +57,20 @@ claude mcp add --transport http local-figma http://localhost:3100/mcp --header "
 
 リモート用サーバーはステートレスで、リクエストごとにMCPサーバーを生成します。Figmaブリッジはstdioのサーバーと共有するため、`npm start`・各クライアントのstdio接続と同時に起動できます。認証はBearerトークンのみで、OAuthには対応していません。OAuth必須のクライアントからは直接接続できません。
 
+### Claude Codeのクラウド環境から使う
+
+claude.ai/codeなどのクラウド環境では、リポジトリ直下の`.mcp.json`を読み込みます。`.mcp.json`は`FIGMA_MCP_URL`と`FIGMA_MCP_TOKEN`の環境変数からリモートMCPサーバーへ接続します。Figmaのあるこのクラウド環境から到達できるよう、手元のPCのサーバーをHTTPSで公開してください。
+
+1. PCで`npm run setup`後、`.env`の`MCP_HTTP_ALLOWED_HOSTS`へ公開ホスト名（例: `figma-mcp.example.com`）を設定し、`npm run start:remote`で起動します。
+2. Cloudflare Tunnelなどで`http://localhost:3100`をHTTPSで公開します。名前付きトンネルなら固定のホスト名を使えます。`cloudflared tunnel --url http://localhost:3100`のクイックトンネルは起動ごとに`*.trycloudflare.com`のURLが変わるため、そのたびに環境変数と許可ホストを更新します。
+3. Figmaでプラグインを起動し、接続します。
+4. claude.aiのクラウド環境の設定（セッション上部の環境メニュー → Edit）で次を設定します。
+   - 環境変数: `FIGMA_MCP_URL=https://公開ホスト名/mcp`、`FIGMA_MCP_TOKEN=.envのMCP_HTTP_TOKENの値`
+   - ネットワークアクセス: 公開ホスト名を許可ドメインに追加（またはより広いアクセスレベルを選択）
+5. 新しいセッションを開始し、`figma_status`で`connected: true`を確認します。
+
+環境変数とMCP設定はセッション開始時に読み込まれます。設定変更後は新しいセッションを開始してください。トークンはリポジトリやチャットに書かず、環境の設定にのみ保存してください。ローカルのClaude Codeでこのフォルダーを開いた場合も`.mcp.json`を検出します。stdio接続を使う場合はこのサーバーを承認せず、`mcp.local.json`の設定を使用してください。
+
 ## Figmaプラグインの接続
 
 1. Figmaデスクトップで編集対象のデザインファイルを開きます。

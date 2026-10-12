@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "figma": {
+      "type": "http",
+      "url": "${FIGMA_MCP_URL:-http://localhost:3100/mcp}",
+      "headers": {
+        "Authorization": "Bearer ${FIGMA_MCP_TOKEN:-}"
+      }
+    }
+  }
+}
